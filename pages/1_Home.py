@@ -7,24 +7,27 @@ st.markdown("""
 <style>
 
 .stApp{
-    background: linear-gradient(
-        135deg,
-        #8b0000,
-        #fff8ee
-    );
+    background-color:#fff8ee;
 }
 
+/* STAGE */
 .stage{
-    background-color:black;
+    background:linear-gradient(
+    90deg,
+    #000000,
+    #8b0000
+    );
+
     color:white;
     text-align:center;
     padding:20px;
-    border-radius:15px;
-    font-size:35px;
+    border-radius:20px;
+    font-size:40px;
     font-weight:bold;
     margin-bottom:30px;
 }
 
+/* SEAT */
 .seat{
     padding:20px;
     border-radius:10px;
@@ -43,7 +46,7 @@ st.markdown("""
 }
 
 .pink{
-    background:#ffb3c7;
+    background:#ff9db2;
 }
 
 .booked{
@@ -54,7 +57,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🎤 TXT WORLD TOUR")
+st.title("🎫 SEAT CONCERT")
 
 st.markdown("""
 <div class="stage">
@@ -67,9 +70,9 @@ df = pd.read_csv("data.csv")
 booked = df["Seat"].tolist()
 
 seat_data = {
-    "VIP": [f"A{i}" for i in range(1,11)],
-    "BLUE": [f"B{i}" for i in range(1,11)],
-    "PINK": [f"C{i}" for i in range(1,11)]
+    "VIP":[f"A{i}" for i in range(1,11)],
+    "BLUE":[f"B{i}" for i in range(1,11)],
+    "PINK":[f"C{i}" for i in range(1,11)]
 }
 
 for kategori, seats in seat_data.items():
