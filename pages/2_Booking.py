@@ -37,7 +37,7 @@ st.title("🎟 BOOKING TICKET")
 df = pd.read_csv("data.csv")
 
 # =========================
-# DATA HARGA
+# HARGA
 # =========================
 
 harga_tiket = {
@@ -47,7 +47,7 @@ harga_tiket = {
 }
 
 # =========================
-# DATA SEAT
+# SEAT
 # =========================
 
 seat_data = {
@@ -57,7 +57,7 @@ seat_data = {
 }
 
 # =========================
-# INPUT USER
+# FORM BOOKING
 # =========================
 
 nama = st.text_input("Nama")
@@ -67,7 +67,9 @@ kategori = st.selectbox(
     list(harga_tiket.keys())
 )
 
-booked = df["Seat"].tolist()
+booked = df[
+    df["Status"] == "PAID"
+]["Seat"].tolist()
 
 seat_tersedia = [
     seat
@@ -101,13 +103,6 @@ admin = 5000
 
 total = harga + pajak + admin
 
-saldo = st.number_input(
-    "Masukkan Saldo",
-    min_value=0
-)
-
-sisa_saldo = saldo - total
-
 # =========================
 # DETAIL
 # =========================
@@ -120,18 +115,8 @@ st.write(f"Biaya Admin : Rp {admin:,}")
 
 st.success(f"TOTAL : Rp {total:,}")
 
-if saldo > 0:
-
-    if saldo < total:
-        st.error("Saldo tidak cukup!")
-
-    else:
-        st.success(
-            f"Sisa Saldo : Rp {sisa_saldo:,.0f}"
-        )
-
 # =========================
-# BOOKING
+# KONFIRMASI PESANAN
 # =========================
 
 if st.button("Konfirmasi Pesanan"):
@@ -139,41 +124,48 @@ if st.button("Konfirmasi Pesanan"):
     if nama == "":
         st.warning("Nama wajib diisi!")
 
-    elif saldo < total:
-        st.error("Saldo tidak cukup!")
-
     else:
 
-        data_baru = pd.DataFrame([{
-            "Nama":nama,
-            "Seat":seat,
-            "Kategori":kategori,
-            "Subtotal":harga,
-            "Pajak":pajak,
-            "Admin":admin,
-            "Total":total,
-            "Metode":metode,
-            "Saldo":saldo,
-            "SisaSaldo":sisa_saldo,
-            "Status":"PENDING"
-        }])
+        cek = df[
+            (df["Nama"] == nama) &
+            (df["Seat"] == seat)
+        ]
 
-        df = pd.concat(
-            [df,data_baru],
-            ignore_index=True
-        )
+        if not cek.empty:
+            st.error("Pesanan sudah ada!")
 
-        df.to_csv(
-            "data.csv",
-            index=False
-        )
+        else:
 
-        st.success(
-            "Pesanan berhasil dibuat!"
-        )
+            data_baru = pd.DataFrame([{
+                "Nama":nama,
+                "Seat":seat,
+                "Kategori":kategori,
+                "Subtotal":harga,
+                "Pajak":pajak,
+                "Admin":admin,
+                "Total":total,
+                "Metode":metode,
+                "Saldo":0,
+                "SisaSaldo":0,
+                "Status":"PENDING"
+            }])
+
+            df = pd.concat(
+                [df,data_baru],
+                ignore_index=True
+            )
+
+            df.to_csv(
+                "data.csv",
+                index=False
+            )
+
+            st.success(
+                "Pesanan berhasil dibuat!"
+            )
 
 # =========================
-# PESANAN USER
+# PESANAN SAYA
 # =========================
 
 st.write("---")
@@ -182,15 +174,17 @@ st.subheader("📋 PESANAN SAYA")
 
 if nama != "":
 
+    df = pd.read_csv("data.csv")
+
     pesanan_user = df[
         df["Nama"] == nama
     ]
 
     st.dataframe(pesanan_user)
 
-    # =========================
-    # UPDATE & DELETE
-    # =========================
+    # =====================
+    # PENDING
+    # =====================
 
     pending = pesanan_user[
         pesanan_user["Status"] == "PENDING"
@@ -271,29 +265,70 @@ if nama != "":
         # BAYAR
         # =====================
 
-        st.subheader("💳 PEMBAYARAN")
+        st.subheader("💳 BAYAR SEKARANG")
 
         pilih_bayar = st.selectbox(
-            "Pilih Seat untuk Dibayar",
+            "Pilih Seat",
             pending["Seat"],
             key="bayar"
         )
 
-        if st.button("Bayar Sekarang"):
+        total_bayar = int(df.loc[
+            df["Seat"] == pilih_bayar,
+            "Total"
+        ].values[0])
 
-            df.loc[
-                df["Seat"] == pilih_bayar,
-                "Status"
-            ] = "PAID"
+        st.info(
+            f"Total Pembayaran : Rp {total_bayar:,}"
+        )
 
-            df.to_csv(
-                "data.csv",
-                index=False
-            )
+        saldo = st.number_input(
+            "Masukkan Saldo",
+            min_value=0,
+            key="saldo"
+        )
+
+        if saldo >= total_bayar:
+
+            sisa_saldo = saldo - total_bayar
 
             st.success(
-                "Pembayaran berhasil!"
+                f"Sisa Saldo : Rp {sisa_saldo:,}"
             )
+
+        if st.button("Bayar"):
+
+            if saldo < total_bayar:
+
+                st.error(
+                    "Saldo tidak cukup!"
+                )
+
+            else:
+
+                df.loc[
+                    df["Seat"] == pilih_bayar,
+                    "Saldo"
+                ] = saldo
+
+                df.loc[
+                    df["Seat"] == pilih_bayar,
+                    "SisaSaldo"
+                ] = sisa_saldo
+
+                df.loc[
+                    df["Seat"] == pilih_bayar,
+                    "Status"
+                ] = "PAID"
+
+                df.to_csv(
+                    "data.csv",
+                    index=False
+                )
+
+                st.success(
+                    "Pembayaran berhasil!"
+                )
 
 # =========================
 # E-TICKET
