@@ -67,9 +67,7 @@ kategori = st.selectbox(
     list(harga_tiket.keys())
 )
 
-booked = df[
-    df["Status"] == "PAID"
-]["Seat"].tolist()
+booked = df["Seat"].tolist()
 
 seat_tersedia = [
     seat
