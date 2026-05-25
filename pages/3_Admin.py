@@ -3,6 +3,17 @@ import pandas as pd
 
 st.set_page_config(layout="wide")
 
+st.markdown("""
+<style>
+
+.stApp{
+    background-color:#1e1e1e;
+    color:white;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("👨‍💼 ADMIN PANEL")
 
 password = st.text_input(
@@ -10,7 +21,7 @@ password = st.text_input(
     type="password"
 )
 
-if password == "admin123":
+if password == "TXT_NASYWA_ADMIN":
 
     df = pd.read_csv("data.csv")
 
