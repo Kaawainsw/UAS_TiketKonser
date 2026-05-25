@@ -78,7 +78,7 @@ saldo = st.number_input(
     min_value=0
 )
 
-kembalian = saldo - total
+sisa_saldo = saldo - total
 
 st.write("### 🧾 DETAIL PEMBAYARAN")
 
@@ -95,7 +95,7 @@ if saldo > 0:
 
     else:
         st.success(
-            f"Kembalian : Rp {kembalian:,.0f}"
+            f"Sisa Saldo : Rp {sisa_saldo:,.0f}"
         )
 
 if st.button("Konfirmasi Pesanan"):
@@ -118,7 +118,7 @@ if st.button("Konfirmasi Pesanan"):
             "Total":total,
             "Metode":metode,
             "Saldo":saldo,
-            "Kembalian":kembalian,
+            "Sisa Saldo":sisa_saldo,
             "Status":"PENDING"
         }])
 
@@ -152,6 +152,36 @@ if nama != "":
         pesanan_user["Status"] == "PENDING"
     ]
 
+st.subheader("💳 PEMBAYARAN")
+
+pending_bayar = pesanan_user[
+    pesanan_user["Status"] == "PENDING"
+]
+
+if not pending_bayar.empty:
+
+    pilih_bayar = st.selectbox(
+        "Pilih Seat untuk Dibayar",
+        pending_bayar["Seat"],
+        key="bayar"
+    )
+
+    if st.button("Bayar Sekarang"):
+
+        df.loc[
+            df["Seat"] == pilih_bayar,
+            "Status"
+        ] = "PAID"
+
+        df.to_csv(
+            "data.csv",
+            index=False
+        )
+
+        st.success(
+            "Pembayaran berhasil!"
+        )
+        
     if not pending.empty:
 
         st.subheader("✏ UPDATE SEAT")
@@ -161,8 +191,19 @@ if nama != "":
             pending["Seat"]
         )
 
-        seat_baru = st.text_input(
-            "Seat Baru"
+        kategori_lama = df.loc[
+            df["Seat"] == seat_lama,
+            "Kategori"
+        ].values[0]
+
+        seat_kategori = [
+            s for s in seat_data[kategori_lama]
+            if s not in booked
+        ]
+
+        seat_baru = st.selectbox(
+            "Seat Baru",
+            seat_kategori
         )
 
         if st.button("Update Seat"):
