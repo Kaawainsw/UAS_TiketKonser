@@ -7,15 +7,20 @@ st.markdown("""
 <style>
 
 .stApp{
-    background: linear-gradient(
-        135deg,
-        #8b0000,
-        #fff8ee
-    );
+    background-color:#fff8ee;
 }
-</stylle>
+
+.box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+</style>
 """, unsafe_allow_html=True)
-st.title("🎟 BOOKING TIKET")
+
+st.title("🎟 BOOKING TICKET")
 
 df = pd.read_csv("data.csv")
 
@@ -26,9 +31,9 @@ harga_tiket = {
 }
 
 seat_data = {
-    "VIP": [f"A{i}" for i in range(1,11)],
-    "BLUE": [f"B{i}" for i in range(1,11)],
-    "PINK": [f"C{i}" for i in range(1,11)]
+    "VIP":[f"A{i}" for i in range(1,11)],
+    "BLUE":[f"B{i}" for i in range(1,11)],
+    "PINK":[f"C{i}" for i in range(1,11)]
 }
 
 nama = st.text_input("Nama")
@@ -51,73 +56,6 @@ seat = st.selectbox(
     seat_tersedia
 )
 
-st.write("---")
-
-st.subheader("✏ UPDATE SEAT")
-
-pending2 = df[
-    df["Status"] == "PENDING"
-]
-
-if not pending2.empty:
-
-    seat_lama = st.selectbox(
-        "Seat Lama",
-        pending2["Seat"],
-        key="update"
-    )
-
-    seat_baru = st.text_input(
-        "Seat Baru"
-    )
-
-    if st.button("Update Seat"):
-
-        booked = df["Seat"].tolist()
-
-        if seat_baru in booked:
-
-            st.error("Seat sudah dipakai!")
-
-        else:
-
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Seat"
-            ] = seat_baru
-
-            df.to_csv(
-                "data.csv",
-                index=False
-            )
-
-            st.success(
-                "Seat berhasil diupdate!"
-            )
-
-st.write("---")
-
-st.subheader("🗑 DELETE PESANAN")
-
-if not pending2.empty:
-
-    delete_seat = st.selectbox(
-        "Pilih Seat",
-        pending2["Seat"],
-        key="delete"
-    )
-
-    if st.button("Hapus Pesanan"):
-            
-        df = df[
-        df["Seat"] != delete_seat
-        ]
-
-        df.to_csv("data.csv",
-            index=False)
-
-        st.success("Pesanan berhasil dihapus!")
-
 metode = st.selectbox(
     "Metode Pembayaran",
     [
@@ -135,6 +73,13 @@ admin = 5000
 
 total = harga + pajak + admin
 
+saldo = st.number_input(
+    "Masukkan Saldo",
+    min_value=0
+)
+
+kembalian = saldo - total
+
 st.write("### 🧾 DETAIL PEMBAYARAN")
 
 st.write(f"Harga Tiket : Rp {harga:,}")
@@ -143,65 +88,167 @@ st.write(f"Biaya Admin : Rp {admin:,}")
 
 st.success(f"TOTAL : Rp {total:,}")
 
-# =========================
-# E-TICKET
-# =========================
+if saldo > 0:
 
-kode_tiket = f"{seat}-{nama}"
+    if saldo < total:
+        st.error("Saldo tidak cukup!")
 
-eticket = f"""
-========== E-TICKET ==========
-TXT WORLD TOUR
-
-Nama : {nama}
-Seat : {seat}
-Kategori : {kategori}
-
-Metode Pembayaran : {metode}
-
-Subtotal : Rp {harga:,}
-Pajak : Rp {pajak:,}
-Biaya Admin : Rp {admin:,}
-
-TOTAL : Rp {total:,}
-
-Status : PENDING
-
-Kode Tiket :
-{kode_tiket}
-
-==============================
-"""
-
-st.download_button(
-    label="🎫 Download E-Ticket",
-    data=eticket,
-    file_name=f"{kode_tiket}.txt",
-    mime="text/plain"
-)
+    else:
+        st.success(
+            f"Kembalian : Rp {kembalian:,.0f}"
+        )
 
 if st.button("Konfirmasi Pesanan"):
 
-    data_baru = pd.DataFrame([{
-        "Nama":nama,
-        "Seat":seat,
-        "Kategori":kategori,
-        "Subtotal":harga,
-        "Pajak":pajak,
-        "Admin":admin,
-        "Total":total,
-        "Metode":metode,
-        "Status":"PENDING"
-    }])
+    if nama == "":
+        st.warning("Nama wajib diisi!")
 
-    df = pd.concat(
-        [df,data_baru],
-        ignore_index=True
-    )
+    elif saldo < total:
+        st.error("Saldo tidak cukup!")
 
-    df.to_csv(
-        "data.csv",
-        index=False
-    )
+    else:
 
-    st.success("Pesanan berhasil dibuat!")
+        data_baru = pd.DataFrame([{
+            "Nama":nama,
+            "Seat":seat,
+            "Kategori":kategori,
+            "Subtotal":harga,
+            "Pajak":pajak,
+            "Admin":admin,
+            "Total":total,
+            "Metode":metode,
+            "Saldo":saldo,
+            "Kembalian":kembalian,
+            "Status":"PENDING"
+        }])
+
+        df = pd.concat(
+            [df,data_baru],
+            ignore_index=True
+        )
+
+        df.to_csv(
+            "data.csv",
+            index=False
+        )
+
+        st.success(
+            "Pesanan berhasil dibuat!"
+        )
+
+st.write("---")
+
+st.subheader("📋 PESANAN SAYA")
+
+if nama != "":
+
+    pesanan_user = df[
+        df["Nama"] == nama
+    ]
+
+    st.dataframe(pesanan_user)
+
+    pending = pesanan_user[
+        pesanan_user["Status"] == "PENDING"
+    ]
+
+    if not pending.empty:
+
+        st.subheader("✏ UPDATE SEAT")
+
+        seat_lama = st.selectbox(
+            "Seat Lama",
+            pending["Seat"]
+        )
+
+        seat_baru = st.text_input(
+            "Seat Baru"
+        )
+
+        if st.button("Update Seat"):
+
+            booked = df["Seat"].tolist()
+
+            if seat_baru in booked:
+                st.error("Seat sudah dipakai!")
+
+            else:
+
+                df.loc[
+                    df["Seat"] == seat_lama,
+                    "Seat"
+                ] = seat_baru
+
+                df.to_csv(
+                    "data.csv",
+                    index=False
+                )
+
+                st.success(
+                    "Seat berhasil diupdate!"
+                )
+
+        st.subheader("🗑 BATALKAN PESANAN")
+
+        hapus = st.selectbox(
+            "Pilih Seat",
+            pending["Seat"],
+            key="hapus"
+        )
+
+        if st.button("Batalkan"):
+
+            df = df[
+                df["Seat"] != hapus
+            ]
+
+            df.to_csv(
+                "data.csv",
+                index=False
+            )
+
+            st.success(
+                "Pesanan berhasil dibatalkan"
+            )
+
+st.write("---")
+
+st.subheader("🎫 E-TICKET")
+
+if nama != "":
+
+    paid = pesanan_user[
+        pesanan_user["Status"] == "PAID"
+    ]
+
+    if not paid.empty:
+
+        for i, row in paid.iterrows():
+
+            st.markdown(f"""
+            ## TXT WORLD TOUR
+            ### ACT : LOVESICK
+
+            👤 Nama :
+            {row['Nama']}
+
+            💺 Seat :
+            {row['Seat']}
+
+            🎟 Kategori :
+            {row['Kategori']}
+
+            💳 Metode :
+            {row['Metode']}
+
+            💰 Total :
+            Rp {row['Total']:,.0f}
+
+            ✅ STATUS :
+            {row['Status']}
+            """)
+
+    else:
+        st.warning(
+            "E-Ticket belum tersedia"
+        )
