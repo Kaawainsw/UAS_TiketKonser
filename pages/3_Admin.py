@@ -21,7 +21,7 @@ password = st.text_input(
     type="password"
 )
 
-if password == "TXT_NASYWA_ADMIN":
+if password == "Kaawai14":
 
     df = pd.read_csv("data.csv")
 
@@ -43,22 +43,6 @@ if password == "TXT_NASYWA_ADMIN":
             "Pilih Seat",
             pending["Seat"]
         )
-
-        if st.button("ACC Pembayaran"):
-
-            df.loc[
-                df["Seat"] == pilih,
-                "Status"
-            ] = "PAID"
-
-            df.to_csv(
-                "data.csv",
-                index=False
-            )
-
-            st.success(
-                "Pembayaran berhasil di ACC"
-            )
 
     st.write("---")
 
