@@ -95,7 +95,7 @@ if saldo > 0:
 
     else:
         st.success(
-            f"Kembalian : Rp {kembalian:,.0f}"
+            f"Kembalian : Rp {sisa saldo:,.0f}"
         )
 
 if st.button("Konfirmasi Pesanan"):
