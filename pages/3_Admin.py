@@ -31,21 +31,6 @@ if password == "Kaawai14":
 
     st.write("---")
 
-    st.subheader("✅ ACC PEMBAYARAN")
-
-    pending = df[
-        df["Status"] == "PENDING"
-    ]
-
-    if not pending.empty:
-
-        pilih = st.selectbox(
-            "Pilih Seat",
-            pending["Seat"]
-        )
-
-    st.write("---")
-
     st.subheader("💰 TOTAL PEMASUKAN")
 
     paid = df[
