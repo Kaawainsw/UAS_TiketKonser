@@ -7,7 +7,11 @@ st.markdown("""
 <style>
 
 .stApp{
-    background-color:#dff4ff;
+    background: linear-gradient(
+        135deg,
+        #8b0000,
+        #fff8ee
+    );
 }
 
 .stage{
