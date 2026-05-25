@@ -3,6 +3,10 @@ import pandas as pd
 
 st.set_page_config(layout="wide")
 
+# =========================
+# STYLE
+# =========================
+
 st.markdown("""
 <style>
 
@@ -20,9 +24,21 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# =========================
+# TITLE
+# =========================
+
 st.title("🎟 BOOKING TICKET")
 
+# =========================
+# LOAD DATA
+# =========================
+
 df = pd.read_csv("data.csv")
+
+# =========================
+# DATA HARGA
+# =========================
 
 harga_tiket = {
     "VIP":3000000,
@@ -30,11 +46,19 @@ harga_tiket = {
     "PINK":1500000
 }
 
+# =========================
+# DATA SEAT
+# =========================
+
 seat_data = {
     "VIP":[f"A{i}" for i in range(1,11)],
     "BLUE":[f"B{i}" for i in range(1,11)],
     "PINK":[f"C{i}" for i in range(1,11)]
 }
+
+# =========================
+# INPUT USER
+# =========================
 
 nama = st.text_input("Nama")
 
@@ -65,6 +89,10 @@ metode = st.selectbox(
     ]
 )
 
+# =========================
+# PERHITUNGAN
+# =========================
+
 harga = harga_tiket[kategori]
 
 pajak = harga * 0.10
@@ -79,6 +107,10 @@ saldo = st.number_input(
 )
 
 sisa_saldo = saldo - total
+
+# =========================
+# DETAIL
+# =========================
 
 st.write("### 🧾 DETAIL PEMBAYARAN")
 
@@ -97,6 +129,10 @@ if saldo > 0:
         st.success(
             f"Sisa Saldo : Rp {sisa_saldo:,.0f}"
         )
+
+# =========================
+# BOOKING
+# =========================
 
 if st.button("Konfirmasi Pesanan"):
 
@@ -118,7 +154,7 @@ if st.button("Konfirmasi Pesanan"):
             "Total":total,
             "Metode":metode,
             "Saldo":saldo,
-            "Sisa Saldo":sisa_saldo,
+            "SisaSaldo":sisa_saldo,
             "Status":"PENDING"
         }])
 
@@ -136,6 +172,10 @@ if st.button("Konfirmasi Pesanan"):
             "Pesanan berhasil dibuat!"
         )
 
+# =========================
+# PESANAN USER
+# =========================
+
 st.write("---")
 
 st.subheader("📋 PESANAN SAYA")
@@ -148,41 +188,19 @@ if nama != "":
 
     st.dataframe(pesanan_user)
 
+    # =========================
+    # UPDATE & DELETE
+    # =========================
+
     pending = pesanan_user[
         pesanan_user["Status"] == "PENDING"
     ]
 
-st.subheader("💳 PEMBAYARAN")
-
-pending_bayar = pesanan_user[
-    pesanan_user["Status"] == "PENDING"
-]
-
-if not pending_bayar.empty:
-
-    pilih_bayar = st.selectbox(
-        "Pilih Seat untuk Dibayar",
-        pending_bayar["Seat"],
-        key="bayar"
-    )
-
-    if st.button("Bayar Sekarang"):
-
-        df.loc[
-            df["Seat"] == pilih_bayar,
-            "Status"
-        ] = "PAID"
-
-        df.to_csv(
-            "data.csv",
-            index=False
-        )
-
-        st.success(
-            "Pembayaran berhasil!"
-        )
-        
     if not pending.empty:
+
+        # =====================
+        # UPDATE
+        # =====================
 
         st.subheader("✏ UPDATE SEAT")
 
@@ -208,26 +226,23 @@ if not pending_bayar.empty:
 
         if st.button("Update Seat"):
 
-            booked = df["Seat"].tolist()
+            df.loc[
+                df["Seat"] == seat_lama,
+                "Seat"
+            ] = seat_baru
 
-            if seat_baru in booked:
-                st.error("Seat sudah dipakai!")
+            df.to_csv(
+                "data.csv",
+                index=False
+            )
 
-            else:
+            st.success(
+                "Seat berhasil diupdate!"
+            )
 
-                df.loc[
-                    df["Seat"] == seat_lama,
-                    "Seat"
-                ] = seat_baru
-
-                df.to_csv(
-                    "data.csv",
-                    index=False
-                )
-
-                st.success(
-                    "Seat berhasil diupdate!"
-                )
+        # =====================
+        # DELETE
+        # =====================
 
         st.subheader("🗑 BATALKAN PESANAN")
 
@@ -252,11 +267,49 @@ if not pending_bayar.empty:
                 "Pesanan berhasil dibatalkan"
             )
 
+        # =====================
+        # BAYAR
+        # =====================
+
+        st.subheader("💳 PEMBAYARAN")
+
+        pilih_bayar = st.selectbox(
+            "Pilih Seat untuk Dibayar",
+            pending["Seat"],
+            key="bayar"
+        )
+
+        if st.button("Bayar Sekarang"):
+
+            df.loc[
+                df["Seat"] == pilih_bayar,
+                "Status"
+            ] = "PAID"
+
+            df.to_csv(
+                "data.csv",
+                index=False
+            )
+
+            st.success(
+                "Pembayaran berhasil!"
+            )
+
+# =========================
+# E-TICKET
+# =========================
+
 st.write("---")
 
 st.subheader("🎫 E-TICKET")
 
 if nama != "":
+
+    df = pd.read_csv("data.csv")
+
+    pesanan_user = df[
+        df["Nama"] == nama
+    ]
 
     paid = pesanan_user[
         pesanan_user["Status"] == "PAID"
@@ -290,6 +343,7 @@ if nama != "":
             """)
 
     else:
+
         st.warning(
             "E-Ticket belum tersedia"
         )
