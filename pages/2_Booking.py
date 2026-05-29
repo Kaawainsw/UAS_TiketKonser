@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import time
 
 st.set_page_config(layout="wide")
 
@@ -331,7 +332,7 @@ if nama != "":
             st.success(
                 "Pesanan berhasil diupdate!"
             )
-
+            time.sleep(1)
             st.rerun()
 
         # =====================
