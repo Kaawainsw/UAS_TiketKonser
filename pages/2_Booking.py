@@ -10,15 +10,87 @@ st.set_page_config(layout="wide")
 st.markdown("""
 <style>
 
+/* BACKGROUND */
 .stApp{
-    background-color:#fff8ee;
+    background: linear-gradient(
+        135deg,
+        #fff8ee,
+        #ffe4e1,
+        #f5f0e6
+    );
+    color:#1e1e1e;
 }
 
-.box{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+/* SEMUA TEXT */
+html, body, [class*="css"]{
+    color:#1e1e1e;
+    font-weight:500;
+}
+
+/* INPUT */
+.stTextInput input{
+    background-color:white !important;
+    color:black !important;
+    border-radius:10px;
+}
+
+.stNumberInput input{
+    background-color:white !important;
+    color:black !important;
+    border-radius:10px;
+}
+
+/* SELECTBOX */
+.stSelectbox div[data-baseweb="select"]{
+    background-color:white !important;
+    color:black !important;
+    border-radius:10px;
+}
+
+/* BUTTON */
+.stButton>button{
+    background-color:#8b0000;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px 20px;
+    font-weight:bold;
+}
+
+.stButton>button:hover{
+    background-color:#b22222;
+    color:white;
+}
+
+/* TABLE */
+[data-testid="stDataFrame"]{
+    background-color:white;
+    border-radius:10px;
+    padding:10px;
+}
+
+/* SUCCESS BOX */
+.stSuccess{
+    background-color:#d4edda !important;
+    color:#155724 !important;
+}
+
+/* WARNING BOX */
+.stWarning{
+    background-color:#fff3cd !important;
+    color:#856404 !important;
+}
+
+/* ERROR BOX */
+.stError{
+    background-color:#f8d7da !important;
+    color:#721c24 !important;
+}
+
+/* INFO BOX */
+.stInfo{
+    background-color:#d1ecf1 !important;
+    color:#0c5460 !important;
 }
 
 </style>
@@ -67,7 +139,9 @@ kategori = st.selectbox(
     list(harga_tiket.keys())
 )
 
-booked = df["Seat"].tolist()
+booked = df[
+    df["Status"] == "PAID"
+]["Seat"].tolist()
 
 seat_tersedia = [
     seat
@@ -190,38 +264,64 @@ if nama != "":
 
     if not pending.empty:
 
-        # =====================
-        # UPDATE
-        # =====================
+    # =====================
+    # UPDATE
+    # =====================
 
-        st.subheader("✏ UPDATE SEAT")
+        st.subheader("✏ UPDATE PESANAN")
 
         seat_lama = st.selectbox(
-            "Seat Lama",
+            "Pilih Seat Lama",
             pending["Seat"]
         )
 
-        kategori_lama = df.loc[
-            df["Seat"] == seat_lama,
-            "Kategori"
-        ].values[0]
+        kategori_baru = st.selectbox(
+            "Kategori Baru",
+            list(harga_tiket.keys())
+        )
 
-        seat_kategori = [
-            s for s in seat_data[kategori_lama]
+        seat_baru_tersedia = [
+            s for s in seat_data[kategori_baru]
             if s not in booked
         ]
 
         seat_baru = st.selectbox(
             "Seat Baru",
-            seat_kategori
+            seat_baru_tersedia
         )
 
-        if st.button("Update Seat"):
+        if st.button("Update Pesanan"):
+
+            harga_baru = harga_tiket[kategori_baru]
+
+            pajak_baru = harga_baru * 0.10
+
+            total_baru = harga_baru + pajak_baru + admin
+
+            df.loc[
+                df["Seat"] == seat_lama,
+                "Kategori"
+            ] = kategori_baru
 
             df.loc[
                 df["Seat"] == seat_lama,
                 "Seat"
             ] = seat_baru
+
+            df.loc[
+                df["Seat"] == seat_lama,
+                "Subtotal"
+            ] = harga_baru
+
+            df.loc[
+                df["Seat"] == seat_lama,
+                "Pajak"
+            ] = pajak_baru
+
+            df.loc[
+                df["Seat"] == seat_lama,
+                "Total"
+            ] = total_baru
 
             df.to_csv(
                 "data.csv",
@@ -229,7 +329,7 @@ if nama != "":
             )
 
             st.success(
-                "Seat berhasil diupdate!"
+                "Pesanan berhasil diupdate!"
             )
 
         # =====================
