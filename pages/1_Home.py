@@ -71,9 +71,21 @@ input{
     font-size:20px;
 }
 
-/* AVAILABLE */
+/* VIP */
 .available{
     background:#7fffd4;
+    color:black;
+}
+
+/* BLUE */
+.blue{
+    background:#87cefa;
+    color:black;
+}
+
+/* PINK */
+.pink{
+    background:#ffb6c1;
     color:black;
 }
 
@@ -105,27 +117,6 @@ input{
 df = pd.read_csv("data.csv")
 
 # =========================
-# TITLE
-# =========================
-
-st.title("🎤 TXT WORLD TOUR")
-st.header("ACT : LOVESICK")
-
-st.write("## 🎵 SONG LIST")
-st.write("""
-- 0X1=LOVESONG  
-- Anti Romantic  
-- Blue Hour  
-- Sugar Rush Ride  
-- Deja Vu  
-- LO$ER=LO♡ER  
-""")
-
-st.write("📞 Contact Admin : 0812-XXXX-XXXX")
-
-st.write("---")
-
-# =========================
 # STAGE
 # =========================
 
@@ -146,7 +137,7 @@ seat_data = {
 }
 
 # =========================
-# BOOKED
+# BOOKED SEAT
 # =========================
 
 booked = df["Seat"].tolist()
@@ -208,7 +199,7 @@ for i, seat in enumerate(seat_data["BLUE"]):
 
         cols[i % 5].markdown(
             f"""
-            <div class="seat-box available">
+            <div class="seat-box blue">
             {seat}
             </div>
             """,
@@ -240,7 +231,7 @@ for i, seat in enumerate(seat_data["PINK"]):
 
         cols[i % 5].markdown(
             f"""
-            <div class="seat-box available">
+            <div class="seat-box pink">
             {seat}
             </div>
             """,
@@ -257,23 +248,50 @@ st.header("💰 PRICE LIST")
 
 col1, col2, col3 = st.columns(3)
 
-col1.success("""
-VIP
-
+col1.markdown("""
+<div style="
+background:#7fffd4;
+padding:20px;
+border-radius:15px;
+text-align:center;
+font-weight:bold;
+font-size:20px;
+color:black;
+">
+VIP<br>
 Rp 3.000.000
-""")
+</div>
+""", unsafe_allow_html=True)
 
-col2.info("""
-BLUE
-
+col2.markdown("""
+<div style="
+background:#87cefa;
+padding:20px;
+border-radius:15px;
+text-align:center;
+font-weight:bold;
+font-size:20px;
+color:black;
+">
+BLUE<br>
 Rp 2.500.000
-""")
+</div>
+""", unsafe_allow_html=True)
 
-col3.error("""
-PINK
-
+col3.markdown("""
+<div style="
+background:#ffb6c1;
+padding:20px;
+border-radius:15px;
+text-align:center;
+font-weight:bold;
+font-size:20px;
+color:black;
+">
+PINK<br>
 Rp 1.500.000
-""")
+</div>
+""", unsafe_allow_html=True)
 
 # =========================
 # INFO
@@ -281,5 +299,7 @@ Rp 1.500.000
 
 st.write("---")
 
-st.write("🟩 Available Seat")
+st.write("🟩 VIP Available")
+st.write("🟦 BLUE Available")
+st.write("🩷 PINK Available")
 st.write("🟥 Booked Seat")
