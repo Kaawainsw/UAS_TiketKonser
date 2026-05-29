@@ -6,52 +6,61 @@ st.set_page_config(layout="wide")
 st.markdown("""
 <style>
 
+/* BACKGROUND */
 .stApp{
-    background-color:#fff8ee;
-}
-
-/* STAGE */
-.stage{
-    background:linear-gradient(
-    90deg,
-    #000000,
-    #8b0000
+    background: linear-gradient(
+        135deg,
+        #fff8ee,
+        #ffe4e1,
+        #f5f0e6
     );
+}
 
-    color:white;
-    text-align:center;
-    padding:20px;
-    border-radius:20px;
-    font-size:40px;
+/* SEMUA TEXT */
+html, body, [class*="css"]{
+    color:#111111 !important;
+    font-weight:500;
+}
+
+/* LABEL */
+label{
+    color:#111111 !important;
+    font-weight:bold !important;
+}
+
+/* TITLE */
+h1, h2, h3, h4{
+    color:#111111 !important;
+}
+
+/* TEXT */
+p, span, div{
+    color:#111111 !important;
+}
+
+/* BUTTON */
+.stButton>button{
+    background-color:#8b0000;
+    color:white !important;
+    border:none;
+    border-radius:12px;
+    padding:10px 20px;
     font-weight:bold;
-    margin-bottom:30px;
 }
 
-/* SEAT */
-.seat{
-    padding:20px;
-    border-radius:10px;
-    text-align:center;
-    font-weight:bold;
-    margin:5px;
-    color:black;
+.stButton>button:hover{
+    background-color:#b22222;
+    color:white !important;
 }
 
-.vip{
-    background:#8ef0c1;
+/* SIDEBAR */
+section[data-testid="stSidebar"]{
+    background-color:#fff0f5;
 }
 
-.blue{
-    background:#7fc8ff;
-}
-
-.pink{
-    background:#ff9db2;
-}
-
-.booked{
-    background:red;
-    color:white;
+/* INFO BOX */
+.stAlert{
+    border-radius:12px;
 }
 
 </style>
