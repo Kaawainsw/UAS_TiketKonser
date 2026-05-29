@@ -332,6 +332,8 @@ if nama != "":
                 "Pesanan berhasil diupdate!"
             )
 
+            st.rerun()
+
         # =====================
         # DELETE
         # =====================
