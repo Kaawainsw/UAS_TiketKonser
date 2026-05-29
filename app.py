@@ -2,8 +2,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="TXT Concert Ticket",
-    layout="wide"
-)
+    layout="wide")
 
 # =========================
 # CUSTOM CSS
@@ -117,18 +116,23 @@ dan performance spektakuler.
 st.markdown("""
 <div class="box">
 
-### 🎶 SETLIST
+### 🎶 SONG LIST
 
 <div class="song">0X1=LOVESONG</div>
 <div class="song">LO$ER=LO♡ER</div>
 <div class="song">Blue Hour</div>
-<div class="song">Sugar Rush Ride</div>
+<div class="song">Good Boy Gone Bad</div>
 <div class="song">Deja Vu</div>
 <div class="song">Anti-Romantic</div>
 <div class="song">Opening Sequence</div>
-<div class="song">Farewell, Neverland</div>
-<div class="song">Chasing That Feeling</div>
+<div class="song">Can't You See Me?</div>
+<div class="song">Eternally</div>
 <div class="song">Magic</div>
+<div class="song">Run Away</div>
+<div class="song">Crown</div>
+<div class="song">Lonely Boy</div>
+<div class="song">Thursday's Child Has Far To Go</div>
+<div class="song">Moa Diary</div>
 
 </div>
 """, unsafe_allow_html=True)
@@ -183,9 +187,7 @@ with col2:
 
 st.write("---")
 
-st.info(
-    "Gunakan menu di sidebar untuk melihat seat konser dan melakukan booking tiket 🎟"
-)
+st.info("Gunakan menu di pojok kiri atas untuk melihat seat konser dan melakukan booking tiket 🎟")
 
 # =========================
 # FOOTER
@@ -193,6 +195,4 @@ st.info(
 
 st.write("---")
 
-st.caption(
-    "TXT Concert Ticket System © 2026"
-)
+st.caption("TXT Concert Ticket System © 2026")
