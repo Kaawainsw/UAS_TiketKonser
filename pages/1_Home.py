@@ -1,7 +1,14 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="TXT Concert",
+    layout="wide"
+)
+
+# =========================
+# CSS
+# =========================
 
 st.markdown("""
 <style>
@@ -10,9 +17,9 @@ st.markdown("""
 .stApp{
     background: linear-gradient(
         135deg,
-        #fff8ee,
-        #ffe4e1,
-        #f5f0e6
+        #dcecf7,
+        #f8f4ef,
+        #ffe4e1
     );
 }
 
@@ -54,16 +61,73 @@ input{
     background-color:#b22222;
 }
 
-/* DATAFRAME */
-[data-testid="stDataFrame"]{
-    background:white;
-    border-radius:10px;
+/* BOX SEAT */
+.seat-box{
+    text-align:center;
+    padding:20px;
+    border-radius:15px;
+    font-weight:bold;
+    margin-bottom:10px;
+    font-size:20px;
+}
+
+/* AVAILABLE */
+.available{
+    background:#7fffd4;
+    color:black;
+}
+
+/* BOOKED */
+.booked{
+    background:#ff4d4d;
+    color:white;
+}
+
+/* STAGE */
+.stage{
+    background:black;
+    color:white;
+    text-align:center;
+    padding:30px;
+    border-radius:20px;
+    font-size:40px;
+    font-weight:bold;
+    margin-bottom:50px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🎫 SEAT CONCERT")
+# =========================
+# DATA CSV
+# =========================
+
+df = pd.read_csv("data.csv")
+
+# =========================
+# TITLE
+# =========================
+
+st.title("🎤 TXT WORLD TOUR")
+st.header("ACT : LOVESICK")
+
+st.write("## 🎵 SONG LIST")
+st.write("""
+- 0X1=LOVESONG  
+- Anti Romantic  
+- Blue Hour  
+- Sugar Rush Ride  
+- Deja Vu  
+- LO$ER=LO♡ER  
+""")
+
+st.write("📞 Contact Admin : 0812-XXXX-XXXX")
+
+st.write("---")
+
+# =========================
+# STAGE
+# =========================
 
 st.markdown("""
 <div class="stage">
@@ -71,9 +135,9 @@ STAGE
 </div>
 """, unsafe_allow_html=True)
 
-df = pd.read_csv("data.csv")
-
-booked = df["Seat"].tolist()
+# =========================
+# SEAT DATA
+# =========================
 
 seat_data = {
     "VIP":[f"A{i}" for i in range(1,11)],
@@ -81,46 +145,141 @@ seat_data = {
     "PINK":[f"C{i}" for i in range(1,11)]
 }
 
-for kategori, seats in seat_data.items():
+# =========================
+# BOOKED
+# =========================
 
-    st.subheader(kategori)
+booked = df["Seat"].tolist()
 
-    cols = st.columns(5)
+# =========================
+# VIP
+# =========================
 
-    for i, seat in enumerate(seats):
+st.subheader("VIP")
 
-        if seat in booked:
-            warna = "booked"
+cols = st.columns(5)
 
-        elif kategori == "VIP":
-            warna = "vip"
+for i, seat in enumerate(seat_data["VIP"]):
 
-        elif kategori == "BLUE":
-            warna = "blue"
-
-        else:
-            warna = "pink"
+    if seat in booked:
 
         cols[i % 5].markdown(
             f"""
-            <div class="seat {warna}">
+            <div class="seat-box booked">
             {seat}
             </div>
             """,
             unsafe_allow_html=True
         )
 
+    else:
+
+        cols[i % 5].markdown(
+            f"""
+            <div class="seat-box available">
+            {seat}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# =========================
+# BLUE
+# =========================
+
+st.subheader("BLUE")
+
+cols = st.columns(5)
+
+for i, seat in enumerate(seat_data["BLUE"]):
+
+    if seat in booked:
+
+        cols[i % 5].markdown(
+            f"""
+            <div class="seat-box booked">
+            {seat}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        cols[i % 5].markdown(
+            f"""
+            <div class="seat-box available">
+            {seat}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# =========================
+# PINK
+# =========================
+
+st.subheader("PINK")
+
+cols = st.columns(5)
+
+for i, seat in enumerate(seat_data["PINK"]):
+
+    if seat in booked:
+
+        cols[i % 5].markdown(
+            f"""
+            <div class="seat-box booked">
+            {seat}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        cols[i % 5].markdown(
+            f"""
+            <div class="seat-box available">
+            {seat}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# =========================
+# PRICE LIST
+# =========================
+
 st.write("---")
 
-st.subheader("💰 PRICE LIST")
+st.header("💰 PRICE LIST")
 
-col1,col2,col3 = st.columns(3)
+col1, col2, col3 = st.columns(3)
 
-with col1:
-    st.success("VIP : Rp 3.000.000")
+col1.success("""
+VIP
 
-with col2:
-    st.info("BLUE : Rp 2.500.000")
+Rp 3.000.000
+""")
 
-with col3:
-    st.error("PINK : Rp 1.500.000")
+col2.info("""
+BLUE
+
+Rp 2.500.000
+""")
+
+col3.error("""
+PINK
+
+Rp 1.500.000
+""")
+
+# =========================
+# INFO
+# =========================
+
+st.write("---")
+
+st.write("🟩 Available Seat")
+st.write("🟥 Booked Seat")
