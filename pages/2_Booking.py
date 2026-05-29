@@ -19,79 +19,23 @@ st.markdown("""
         #ffe4e1,
         #f5f0e6
     );
-    color:#1e1e1e;
+    color:#111111;
 }
 
-/* SEMUA TEXT */
-html, body, [class*="css"]{
-    color:#1e1e1e;
-    font-weight:500;
+/* LABEL INPUT */
+label{
+    color:#111111 !important;
+    font-weight:bold !important;
 }
 
-/* INPUT */
-.stTextInput input{
-    background-color:white !important;
-    color:black !important;
-    border-radius:10px;
+/* TEXT */
+p, span, div{
+    color:#111111 !important;
 }
 
-.stNumberInput input{
-    background-color:white !important;
-    color:black !important;
-    border-radius:10px;
-}
-
-/* SELECTBOX */
-.stSelectbox div[data-baseweb="select"]{
-    background-color:white !important;
-    color:black !important;
-    border-radius:10px;
-}
-
-/* BUTTON */
-.stButton>button{
-    background-color:#8b0000;
-    color:white;
-    border:none;
-    border-radius:10px;
-    padding:10px 20px;
-    font-weight:bold;
-}
-
-.stButton>button:hover{
-    background-color:#b22222;
-    color:white;
-}
-
-/* TABLE */
-[data-testid="stDataFrame"]{
-    background-color:white;
-    border-radius:10px;
-    padding:10px;
-}
-
-/* SUCCESS BOX */
-.stSuccess{
-    background-color:#d4edda !important;
-    color:#155724 !important;
-}
-
-/* WARNING BOX */
-.stWarning{
-    background-color:#fff3cd !important;
-    color:#856404 !important;
-}
-
-/* ERROR BOX */
-.stError{
-    background-color:#f8d7da !important;
-    color:#721c24 !important;
-}
-
-/* INFO BOX */
-.stInfo{
-    background-color:#d1ecf1 !important;
-    color:#0c5460 !important;
+/* TITLE */
+h1, h2, h3, h4{
+    color:#111111 !important;
 }
 
 </style>
