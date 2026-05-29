@@ -16,10 +16,9 @@ st.markdown("""
     );
 }
 
-/* SEMUA TEXT */
-html, body, [class*="css"]{
+/* TITLE */
+h1,h2,h3,h4{
     color:#111111 !important;
-    font-weight:500;
 }
 
 /* LABEL */
@@ -28,14 +27,17 @@ label{
     font-weight:bold !important;
 }
 
-/* TITLE */
-h1, h2, h3, h4{
+/* INPUT */
+input{
     color:#111111 !important;
+    background:white !important;
 }
 
-/* TEXT */
-p, span, div{
+/* SELECTBOX */
+.stSelectbox div[data-baseweb="select"]{
+    background:white !important;
     color:#111111 !important;
+    border-radius:10px;
 }
 
 /* BUTTON */
@@ -50,17 +52,12 @@ p, span, div{
 
 .stButton>button:hover{
     background-color:#b22222;
-    color:white !important;
 }
 
-/* SIDEBAR */
-section[data-testid="stSidebar"]{
-    background-color:#fff0f5;
-}
-
-/* INFO BOX */
-.stAlert{
-    border-radius:12px;
+/* DATAFRAME */
+[data-testid="stDataFrame"]{
+    background:white;
+    border-radius:10px;
 }
 
 </style>
