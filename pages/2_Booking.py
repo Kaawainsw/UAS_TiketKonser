@@ -403,50 +403,49 @@ st.write("---")
 
 st.subheader("🎫 E-TICKET")
 
-if nama != "":
+booking_id_cari = st.text_input(
+    "Masukkan Booking ID"
+)
+
+if booking_id_cari != "":
 
     df = pd.read_csv("data.csv")
 
-    pesanan_user = df[
-        df["Nama"] == nama
+    tiket = df[
+        (df["BookingID"] == booking_id_cari)
+        &
+        (df["Status"] == "PAID")
     ]
 
-    paid = pesanan_user[
-        pesanan_user["Status"] == "PAID"
-    ]
+    if not tiket.empty:
 
-    if not paid.empty:
+        row = tiket.iloc[0]
 
-        for i, row in paid.iterrows():
+        st.markdown(f"""
+        ## TXT WORLD TOUR
+        ### ACT : LOVESICK
 
-            st.markdown(f"""
-            ## TXT WORLD TOUR
-            ### ACT : LOVESICK
+        👤 Nama :
+        {row['Nama']}
 
-            👤 Nama :
-            {row['Nama']}
+        🆔 Booking ID :
+        {row['BookingID']}
 
-            🆔 Booking ID :
-            {row['BookingID']}
+        💺 Seat :
+        {row['Seat']}
 
-            💺 Seat :
-            {row['Seat']}
+        🎟 Kategori :
+        {row['Kategori']}
 
-            🎟 Kategori :
-            {row['Kategori']}
+        💳 Metode :
+        {row['Metode']}
 
-            💳 Metode :
-            {row['Metode']}
+        💰 Total :
+        Rp {row['Total']:,.0f}
 
-            💰 Total :
-            Rp {row['Total']:,.0f}
-
-            ✅ STATUS :
-            {row['Status']}
-            """)
+        ✅ STATUS :
+        {row['Status']}
+        """)
 
     else:
-
-        st.warning(
-            "E-Ticket belum tersedia"
-        )
+        st.warning("Booking ID tidak ditemukan atau tiket belum dibayar")
