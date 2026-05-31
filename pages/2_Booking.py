@@ -137,7 +137,14 @@ st.success(f"TOTAL : Rp {total:,}")
 # =========================
 
 if st.button("Konfirmasi Pesanan"):
+    df = pd.read_csv("data.csv")
 
+    if seat in df["Seat"].tolist():
+
+        st.error("Seat sudah dibooking!")
+
+        st.stop()
+        
     if nama == "":
         st.warning("Nama wajib diisi!")
 
@@ -276,7 +283,6 @@ if nama != "":
             st.success(
                 "Pesanan berhasil diupdate!"
             )
-            time.sleep(1)
             st.rerun()
 
         # =====================
