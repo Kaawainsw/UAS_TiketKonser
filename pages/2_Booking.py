@@ -53,7 +53,6 @@ st.title("🎟 BOOKING TICKET")
 # =========================
 
 df = pd.read_csv("data.csv")
-st.write(df.columns.tolist())
 
 def generate_booking_id(df):
 
