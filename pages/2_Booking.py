@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import time
+import random
 
 st.set_page_config(layout="wide")
 
@@ -53,6 +54,18 @@ st.title("🎟 BOOKING TICKET")
 
 df = pd.read_csv("data.csv")
 
+def generate_booking_id(df):
+
+    while True:
+
+        booking_id = "BK" + str(
+            random.randint(1000, 9999)
+        )
+
+        if booking_id not in df["BookingID"].astype(str).tolist():
+
+            return booking_id
+
 # =========================
 # HARGA
 # =========================
@@ -84,9 +97,7 @@ kategori = st.selectbox(
     list(harga_tiket.keys())
 )
 
-booked = df[
-    df["Status"] == "PAID"
-]["Seat"].tolist()
+booked = df["Seat"].tolist()
 
 seat_tersedia = [
     seat
@@ -144,7 +155,7 @@ if st.button("Konfirmasi Pesanan"):
         st.error("Seat sudah dibooking!")
 
         st.stop()
-        
+
     if nama == "":
         st.warning("Nama wajib diisi!")
 
@@ -154,25 +165,26 @@ if st.button("Konfirmasi Pesanan"):
             (df["Nama"] == nama) &
             (df["Seat"] == seat)
         ]
+        booking_id = generate_booking_id(df)
 
         if not cek.empty:
             st.error("Pesanan sudah ada!")
 
         else:
-
             data_baru = pd.DataFrame([{
-                "Nama":nama,
-                "Seat":seat,
-                "Kategori":kategori,
-                "Subtotal":harga,
-                "Pajak":pajak,
-                "Admin":admin,
-                "Total":total,
-                "Metode":metode,
-                "Saldo":0,
-                "SisaSaldo":0,
-                "Status":"PENDING"
-            }])
+            "BookingID": booking_id,
+            "Nama": nama,
+            "Seat": seat,
+            "Kategori": kategori,
+            "Subtotal": harga,
+            "Pajak": pajak,
+            "Admin": admin,
+            "Total": total,
+            "Metode": metode,
+            "Saldo": 0,
+            "SisaSaldo": 0,
+            "Status": "PENDING"
+        }])
 
             df = pd.concat(
                 [df,data_baru],
@@ -185,8 +197,10 @@ if st.button("Konfirmasi Pesanan"):
             )
 
             st.success(
-                "Pesanan berhasil dibuat!"
+            f"Pesanan berhasil dibuat!\n\nID Booking: {booking_id}"
             )
+            time.sleep(1)
+            st.rerun()
 
 # =========================
 # PESANAN SAYA
@@ -204,8 +218,18 @@ if nama != "":
         df["Nama"] == nama
     ]
 
-    st.dataframe(pesanan_user)
-
+    st.dataframe(
+        pesanan_user[
+            [
+                "BookingID",
+                "Nama",
+                "Seat",
+                "Kategori",
+                "Total",
+                "Status"
+            ]
+        ]
+    )
     # =====================
     # PENDING
     # =====================
@@ -250,30 +274,15 @@ if nama != "":
 
             total_baru = harga_baru + pajak_baru + admin
 
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Kategori"
-            ] = kategori_baru
+            idx = df[
+                df["Seat"] == seat_lama
+            ].index
 
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Seat"
-            ] = seat_baru
-
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Subtotal"
-            ] = harga_baru
-
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Pajak"
-            ] = pajak_baru
-
-            df.loc[
-                df["Seat"] == seat_lama,
-                "Total"
-            ] = total_baru
+            df.loc[idx, "Kategori"] = kategori_baru
+            df.loc[idx, "Seat"] = seat_baru
+            df.loc[idx, "Subtotal"] = harga_baru
+            df.loc[idx, "Pajak"] = pajak_baru
+            df.loc[idx, "Total"] = total_baru
 
             df.to_csv(
                 "data.csv",
@@ -283,6 +292,7 @@ if nama != "":
             st.success(
                 "Pesanan berhasil diupdate!"
             )
+            time.sleep(1)
             st.rerun()
 
         # =====================
@@ -311,6 +321,8 @@ if nama != "":
             st.success(
                 "Pesanan berhasil dibatalkan"
             )
+            time.sleep(1)
+            st.rerun()
 
         # =====================
         # BAYAR
@@ -380,6 +392,8 @@ if nama != "":
                 st.success(
                     "Pembayaran berhasil!"
                 )
+                time.sleep(1)
+                st.rerun()
 
 # =========================
 # E-TICKET
@@ -411,6 +425,9 @@ if nama != "":
 
             👤 Nama :
             {row['Nama']}
+
+            🆔 Booking ID :
+            {row['BookingID']}
 
             💺 Seat :
             {row['Seat']}
