@@ -110,15 +110,6 @@ seat = st.selectbox(
     seat_tersedia
 )
 
-metode = st.selectbox(
-    "Metode Pembayaran",
-    [
-        "Debit",
-        "Kredit",
-        "QRIS"
-    ]
-)
-
 # =========================
 # PERHITUNGAN
 # =========================
@@ -180,7 +171,7 @@ if st.button("Konfirmasi Pesanan"):
             "Pajak": pajak,
             "Admin": admin,
             "Total": total,
-            "Metode": metode,
+            "Metode": "BELUM DIPILIH",
             "Saldo": 0,
             "SisaSaldo": 0,
             "Status": "PENDING"
@@ -359,63 +350,64 @@ if nama != "":
         )
         
         sisa_saldo = 0
-        
-        if saldo >= total_bayar:
-        
-            sisa_saldo = saldo - total_bayar
-        
-            st.success(
-                f"Sisa Saldo : Rp {sisa_saldo:,}"
-            )
-        
-        else:
-        
-            st.warning(
-                "Saldo tidak cukup. Silakan pilih metode lain atau isi saldo lebih besar."
-            )
-        
-        if st.button("Bayar"):
-        
-            if saldo < total_bayar:
-        
-                st.error(
-                    "Pembayaran gagal karena saldo tidak cukup."
-                )
-        
-            else:
-        
-                df.loc[
-                    df["Seat"] == pilih_bayar,
-                    "Saldo"
-                ] = saldo
-        
-                df.loc[
-                    df["Seat"] == pilih_bayar,
-                    "SisaSaldo"
-                ] = sisa_saldo
-        
-                df.loc[
-                    df["Seat"] == pilih_bayar,
-                    "Metode"
-                ] = metode_bayar
-        
-                df.loc[
-                    df["Seat"] == pilih_bayar,
-                    "Status"
-                ] = "PAID"
-        
-                df.to_csv(
-                    "data.csv",
-                    index=False
-                )
-        
+
+        if saldo > 0:
+            if saldo >= total_bayar:
+            
+                sisa_saldo = saldo - total_bayar
+            
                 st.success(
-                    "Pembayaran berhasil!"
+                    f"Sisa Saldo : Rp {sisa_saldo:,}"
                 )
-        
-                time.sleep(1)
-        
-                st.rerun()
+            
+            else:
+            
+                st.warning(
+                    "Saldo tidak cukup. Silakan pilih metode lain atau isi saldo lebih besar."
+                )
+            
+            if st.button("Bayar"):
+            
+                if saldo < total_bayar:
+            
+                    st.error(
+                        "Pembayaran gagal karena saldo tidak cukup."
+                    )
+            
+                else:
+            
+                    df.loc[
+                        df["Seat"] == pilih_bayar,
+                        "Saldo"
+                    ] = saldo
+            
+                    df.loc[
+                        df["Seat"] == pilih_bayar,
+                        "SisaSaldo"
+                    ] = sisa_saldo
+            
+                    df.loc[
+                        df["Seat"] == pilih_bayar,
+                        "Metode"
+                    ] = metode_bayar
+            
+                    df.loc[
+                        df["Seat"] == pilih_bayar,
+                        "Status"
+                    ] = "PAID"
+            
+                    df.to_csv(
+                        "data.csv",
+                        index=False
+                    )
+            
+                    st.success(
+                        "Pembayaran berhasil!"
+                    )
+            
+                    time.sleep(1)
+            
+                    st.rerun()
 
 # =========================
 # E-TICKET
