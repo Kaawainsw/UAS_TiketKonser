@@ -328,71 +328,94 @@ if nama != "":
         # BAYAR
         # =====================
 
-        st.subheader("💳 BAYAR SEKARANG")
+       st.subheader("💳 BAYAR SEKARANG")
 
         pilih_bayar = st.selectbox(
             "Pilih Seat",
             pending["Seat"],
             key="bayar"
         )
-
-        total_bayar = int(df.loc[
-            df["Seat"] == pilih_bayar,
-            "Total"
-        ].values[0])
-
+        
+        total_bayar = int(
+            df.loc[
+                df["Seat"] == pilih_bayar,
+                "Total"
+            ].values[0]
+        )
+        
         st.info(
             f"Total Pembayaran : Rp {total_bayar:,}"
         )
-
+        
+        metode_bayar = st.selectbox(
+            "Metode Pembayaran",
+            ["Debit", "Kredit", "QRIS"],
+            key="metode_bayar"
+        )
+        
         saldo = st.number_input(
             "Masukkan Saldo",
             min_value=0,
             key="saldo"
         )
-
+        
+        sisa_saldo = 0
+        
         if saldo >= total_bayar:
-
+        
             sisa_saldo = saldo - total_bayar
-
+        
             st.success(
                 f"Sisa Saldo : Rp {sisa_saldo:,}"
             )
-
+        
+        else:
+        
+            st.warning(
+                "Saldo tidak cukup. Silakan pilih metode lain atau isi saldo lebih besar."
+            )
+        
         if st.button("Bayar"):
-
+        
             if saldo < total_bayar:
-
+        
                 st.error(
-                    "Saldo tidak cukup!"
+                    "Pembayaran gagal karena saldo tidak cukup."
                 )
-
+        
             else:
-
+        
                 df.loc[
                     df["Seat"] == pilih_bayar,
                     "Saldo"
                 ] = saldo
-
+        
                 df.loc[
                     df["Seat"] == pilih_bayar,
                     "SisaSaldo"
                 ] = sisa_saldo
-
+        
+                df.loc[
+                    df["Seat"] == pilih_bayar,
+                    "Metode"
+                ] = metode_bayar
+        
                 df.loc[
                     df["Seat"] == pilih_bayar,
                     "Status"
                 ] = "PAID"
-
+        
                 df.to_csv(
                     "data.csv",
                     index=False
                 )
-
+        
                 st.success(
                     "Pembayaran berhasil!"
                 )
+        
                 time.sleep(1)
+        
                 st.rerun()
 
 # =========================
