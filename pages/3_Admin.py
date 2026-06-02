@@ -20,8 +20,10 @@ password = st.text_input(
     "Password Admin",
     type="password"
 )
-
-if password == "Kaawai14":
+if password == "":
+    st.warning("Masukkan Password Admin")
+    
+elif password == "Kaawai14":
 
     df = pd.read_csv("data.csv")
 
@@ -44,7 +46,4 @@ if password == "Kaawai14":
     )
 
 else:
-
-    st.warning(
-        "Masukkan password admin"
-    )
+    st.warning("❌ Password admin salah!")
